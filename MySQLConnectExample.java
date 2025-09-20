@@ -28,16 +28,69 @@ public class MySQLConnectExample {
 
     // This method now correctly references the Student class from its own file
     public static void printStudentDetails(Map<String, Map<String, List<Student_Count.Student>>> studentGroups) {
-        System.out.println("--- All Student Details ---");
-        for (Map.Entry<String, Map<String, List<Student_Count.Student>>> groupEntry : studentGroups.entrySet()) {
-            String groupName = groupEntry.getKey();
-            Map<String, List<Student_Count.Student>> sections = groupEntry.getValue();
+        // Sort group names by year level
+        List<String> sortedGroupNames = new ArrayList<>(studentGroups.keySet());
+        sortedGroupNames.sort((a, b) -> {
+            int yearA = Integer.parseInt(a.split("th Year")[0].trim());
+            int yearB = Integer.parseInt(b.split("th Year")[0].trim());
+            return Integer.compare(yearA, yearB);
+        });
 
+        // Print per-section summary for each group
+        System.out.println("\n--- Section Details ---");
+        for (String groupName : sortedGroupNames) {
+            Map<String, List<Student_Count.Student>> sections = studentGroups.get(groupName);
+            for (Map.Entry<String, List<Student_Count.Student>> sectionEntry : sections.entrySet()) {
+                String sectionName = sectionEntry.getKey();
+                int count = sectionEntry.getValue().size();
+                System.out.printf("%s %s - %d students\n", groupName, sectionName, count);
+            }
+        }
+        System.out.println("--- End of Section Details ---\n");
+
+        // Print summary for each group
+        System.out.println("--- Section Summary ---");
+        for (String groupName : sortedGroupNames) {
+            Map<String, List<Student_Count.Student>> sections = studentGroups.get(groupName);
+            int totalStudents = 0;
+            for (List<Student_Count.Student> students : sections.values()) {
+                totalStudents += students.size();
+            }
+            System.out.printf("%s: %d students, %d sections (min 10, max 40 per section)\n", groupName, totalStudents, sections.size());
+        }
+        System.out.println("--- End of Section Summary ---\n");
+
+        // Print per-section summary for each group
+        System.out.println("\n--- Section Details ---");
+        for (String groupName : sortedGroupNames) {
+            Map<String, List<Student_Count.Student>> sections = studentGroups.get(groupName);
+            for (Map.Entry<String, List<Student_Count.Student>> sectionEntry : sections.entrySet()) {
+                String sectionName = sectionEntry.getKey();
+                int count = sectionEntry.getValue().size();
+                System.out.printf("%s %s - %d students\n", groupName, sectionName, count);
+            }
+        }
+        System.out.println("--- End of Section Details ---\n");
+
+        // Print summary for each group
+        System.out.println("--- Section Summary ---");
+        for (String groupName : sortedGroupNames) {
+            Map<String, List<Student_Count.Student>> sections = studentGroups.get(groupName);
+            int totalStudents = 0;
+            for (List<Student_Count.Student> students : sections.values()) {
+                totalStudents += students.size();
+            }
+            System.out.printf("%s: %d students, %d sections (min 10, max 40 per section)\n", groupName, totalStudents, sections.size());
+        }
+        System.out.println("--- End of Section Summary ---\n");
+
+        // Print details for each section
+        for (String groupName : sortedGroupNames) {
+            Map<String, List<Student_Count.Student>> sections = studentGroups.get(groupName);
             for (Map.Entry<String, List<Student_Count.Student>> sectionEntry : sections.entrySet()) {
                 String sectionName = sectionEntry.getKey();
                 List<Student_Count.Student> students = sectionEntry.getValue();
-
-                System.out.println("\n" + groupName + " - " + sectionName + ":");
+                System.out.println("\n" + groupName + " - " + sectionName + " (" + students.size() + " students):");
                 for (Student_Count.Student student : students) {
                     System.out.println("  - " + student.name + " (" + student.yearLevel + "th Year, " + student.course + ")");
                 }
@@ -129,29 +182,29 @@ public class MySQLConnectExample {
         String user = "root";
         String password = "";
 
-        try (Connection conn = DriverManager.getConnection(url, user, password)) {
-            System.out.println("Connected to MySQL!");
-
-            // Print all details from courses table
-            String query = "SELECT * FROM courses";
-            Statement stmt = conn.createStatement();
-            ResultSet rs = stmt.executeQuery(query);
-
-            ResultSetMetaData meta = rs.getMetaData();
-            int columnCount = meta.getColumnCount();
-
-            while (rs.next()) {
-                for (int i = 1; i <= columnCount; i++) {
-                    System.out.print(meta.getColumnName(i) + ": " + rs.getString(i) + "  ");
-                }
-                System.out.println();
-            }
-
-            rs.close();
-            stmt.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+//        try (Connection conn = DriverManager.getConnection(url, user, password)) {
+//            System.out.println("Connected to MySQL!");
+//
+//            // Print all details from courses table
+//            String query = "SELECT * FROM courses";
+//            Statement stmt = conn.createStatement();
+//            ResultSet rs = stmt.executeQuery(query);
+//
+//            ResultSetMetaData meta = rs.getMetaData();
+//            int columnCount = meta.getColumnCount();
+//
+//            while (rs.next()) {
+//                for (int i = 1; i <= columnCount; i++) {
+//                    System.out.print(meta.getColumnName(i) + ": " + rs.getString(i) + "  ");
+//                }
+//                System.out.println();
+//            }
+//
+//            rs.close();
+//            stmt.close();
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        }
 
          int totalStudents = 1200;
         String[] courses = {"BSCS", "BSIT", "BSIS"};
